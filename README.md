@@ -42,7 +42,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/grantflow.git
+git clone https://github.com/Hardikpatel15/grantflow.git
 cd grantflow
 ```
 
