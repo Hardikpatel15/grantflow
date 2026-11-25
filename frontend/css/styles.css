@@ -1,0 +1,656 @@
+/* ====================================================================
+   GrantFlow — Strict Swiss & Cobalt Modernist Design System Tokens
+   Palette aligned with Reality-First Gateway Landing Page:
+   Cream (#E3E2DE), Cobalt (#1351AA), Jet (#141414), Deepgray (#444343)
+   ==================================================================== */
+
+:root {
+  /* Surface & Background Tokens (Clean White Palette) */
+  --bg-main: #FFFFFF;
+  --bg-nav: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F8F9FA;
+  --border-subtle: #E5E7EB;
+  --border-hover: #1351AA;
+
+  /* Cobalt Blue Accent Tokens */
+  --primary-cobalt: #1351AA;
+  --cobalt-hover: #0D3B7D;
+  --soft-cobalt: #3B7AD9;
+  --cobalt-subtle: rgba(19, 81, 170, 0.08);
+
+  /* Legacy alias support */
+  --primary-copper: #1351AA;
+  --copper-hover: #0D3B7D;
+  --soft-copper: #3B7AD9;
+
+  /* High-Contrast Modernist Typography Tokens */
+  --text-primary: #111827;
+  --text-secondary: #1F2937;
+  --text-muted: #374151;
+
+  /* Semantic Feedback Tokens */
+  --status-success: #1F8A4C;
+  --status-warning: #C97A16;
+  --status-error: #C92A2A;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: 'General Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #60A5FA;
+}
+
+/* Clean Card Architecture — Calm & Smooth Hover */
+.gf-card {
+  position: relative;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.85rem;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Smooth Chart Panel Transitions */
+.gf-chart-panel {
+  transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gf-chart-panel.chart-switching {
+  opacity: 0.35;
+  transform: scale(0.985) translateY(6px);
+}
+
+/* Flashlight Specular Cursor Highlight (Light Blue Tone) */
+.gf-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(340px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), rgba(96, 165, 250, 0.14), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.gf-card:hover::before {
+  opacity: 1;
+}
+
+.gf-card:hover {
+  transform: translateY(-2px);
+  border-color: #60A5FA !important;
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.12),
+              0 0 15px -3px rgba(96, 165, 250, 0.18);
+}
+
+/* Navigation Tab Active Indicator */
+.tab-btn {
+  position: relative;
+  color: var(--text-secondary);
+  border-radius: 0.5rem;
+  transition: all 180ms ease;
+}
+
+.tab-btn:hover {
+  color: #2563EB !important;
+  background-color: #EFF6FF !important;
+}
+
+.tab-btn.active {
+  color: var(--primary-cobalt) !important;
+  background-color: var(--cobalt-subtle);
+  font-weight: 700;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-cobalt);
+  border-radius: 2px;
+}
+
+/* Tab Smooth Viewport Entrance */
+.tab-content {
+  animation: none;
+}
+
+.tab-content.gf-tab-enter {
+  animation: gfTabFadeSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes gfTabFadeSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary-cobalt);
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 0.625rem;
+  transition: all 160ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.btn-primary:hover {
+  background-color: var(--cobalt-hover);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(19, 81, 170, 0.32);
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: 0.625rem;
+  transition: all 160ms ease;
+}
+
+.btn-secondary:hover {
+  background-color: #EFF6FF;
+  border-color: #60A5FA;
+  color: #2563EB;
+}
+
+/* Form Controls */
+input, select, textarea {
+  background-color: #FFFFFF !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary-cobalt) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px var(--primary-cobalt) !important;
+}
+
+/* Toast */
+@keyframes toastSlideUp {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-anim {
+  animation: toastSlideUp 180ms ease forwards;
+}
+
+/* ====================================================================
+   PREMIUM ANIMATIONS — Ascora Space & Cybernetic Interaction System
+   (Adapted to Cream #E3E2DE + Cobalt #1351AA Palette)
+   ==================================================================== */
+
+/* --- 0. Ascora Cosmic Constellation Canvas & Cursor Follower --- */
+#ascora-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.95;
+}
+
+#cursor-glow {
+  position: fixed;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, rgba(147, 197, 253, 0.06) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s ease;
+  will-change: left, top;
+}
+
+/* --- Animated Shimmer Gradient Typography (Cobalt & Light Blue) --- */
+.shimmer-text {
+  background: linear-gradient(90deg, #1351AA 0%, #2563EB 30%, #60A5FA 50%, #2563EB 70%, #1351AA 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: textShimmerMove 6s linear infinite;
+}
+
+@keyframes textShimmerMove {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* --- Luminous Border Beam Animation (Traveling Cobalt Laser Light) --- */
+.border-beam-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.85rem;
+}
+
+.border-beam-card::after {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--beam-angle, 0deg), transparent 0deg 280deg, rgba(19, 81, 170, 0.25) 310deg, #1351AA 340deg, #3B7AD9 355deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 6;
+  animation: rotateBeam 4s linear infinite;
+  padding: 1.5px;
+}
+
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotateBeam {
+  0%   { --beam-angle: 0deg; }
+  100% { --beam-angle: 360deg; }
+}
+
+/* Fallback for browsers without @property */
+@keyframes borderBeamFallback {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- 1. Ambient Background Gradient / Glow Effect --- */
+.gf-ambient-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gf-ambient-glow::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(19, 81, 170, 0.04) 0%, transparent 70%);
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: ambientGlowDrift 14s ease-in-out infinite alternate;
+}
+
+.gf-ambient-glow::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 122, 217, 0.03) 0%, transparent 70%);
+  bottom: -80px;
+  right: -100px;
+  animation: ambientGlowDrift2 16s ease-in-out infinite alternate;
+}
+
+@keyframes ambientGlowDrift {
+  0%   { transform: translateX(-50%) translateY(0); }
+  100% { transform: translateX(-40%) translateY(40px); }
+}
+
+@keyframes ambientGlowDrift2 {
+  0%   { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-30px) translateY(-30px); }
+}
+
+/* --- 2. Scroll-Triggered Fade-In Animations --- */
+.gf-animate-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.gf-animate-in.gf-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide from left */
+.gf-animate-slide-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.gf-animate-slide-left.gf-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide from right */
+.gf-animate-slide-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.gf-animate-slide-right.gf-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale-in for DP-900 classification cards */
+.gf-animate-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.gf-animate-scale.gf-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Active Role Switcher Beacon Glow */
+.role-btn-active-glow {
+  box-shadow: 0 0 16px rgba(19, 81, 170, 0.5), 0 0 2px rgba(255, 255, 255, 0.6) !important;
+  animation: pulseRoleBeacon 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseRoleBeacon {
+  0%   { box-shadow: 0 0 8px rgba(19, 81, 170, 0.35); }
+  100% { box-shadow: 0 0 22px rgba(19, 81, 170, 0.75), 0 0 6px rgba(59, 122, 217, 0.5); }
+}
+
+/* --- Click Celestial Star Sparks --- */
+.gf-spark {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 9999;
+  animation: sparkFly 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sparkFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* --- Liquid Glowing Striped Progress Bars (Cobalt) --- */
+.gf-progress-liquid {
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.3) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.3) 75%,
+    transparent 75%,
+    transparent
+  ) !important;
+  background-size: 20px 20px !important;
+  animation: progressStripes 0.9s linear infinite !important;
+  box-shadow: 0 0 10px rgba(19, 81, 170, 0.4);
+}
+
+@keyframes progressStripes {
+  0%   { background-position: 0 0; }
+  100% { background-position: 20px 0; }
+}
+
+/* --- 5. Loading Skeleton Shimmer --- */
+.gf-skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-elevated);
+  border-radius: 0.5rem;
+}
+
+.gf-skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(19, 81, 170, 0.05) 40%,
+    rgba(19, 81, 170, 0.12) 50%,
+    rgba(19, 81, 170, 0.05) 60%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+
+.gf-skeleton-text {
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.gf-skeleton-lg {
+  height: 28px;
+  width: 60%;
+}
+
+/* --- 6. Modal Entrance & Exit Animations --- */
+.gf-modal-backdrop {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gf-modal-backdrop.gf-modal-active {
+  opacity: 1;
+}
+
+.gf-modal-card {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gf-modal-backdrop.gf-modal-active .gf-modal-card {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* --- 8. Button Ripple Effect --- */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.gf-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: gfRippleExpand 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes gfRippleExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* --- 9. Progress Bar Animations --- */
+.gf-progress-bar {
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- Accessibility: Respect prefers-reduced-motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .gf-ambient-glow::before,
+  .gf-ambient-glow::after {
+    animation: none !important;
+  }
+
+  .gf-animate-in,
+  .gf-animate-slide-left,
+  .gf-animate-slide-right,
+  .gf-animate-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .gf-skeleton::after {
+    animation: none !important;
+  }
+
+  .gf-modal-backdrop,
+  .gf-modal-card {
+    transition: none !important;
+  }
+
+  .tab-content.gf-tab-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .gf-ripple {
+    animation: none !important;
+    display: none !important;
+  }
+
+  .gf-progress-bar {
+    transition: none !important;
+  }
+
+  .gf-card:hover {
+    transform: none !important;
+  }
+
+  .gf-ambient-glow {
+    display: none !important;
+  }
+}
+
+/* ====================================================================
+   CONTINUOUS SCROLLING & FLOATING ROLE DOCK SYSTEM
+   ==================================================================== */
+html {
+  scroll-behavior: smooth;
+}
+
+.gf-scroll-section {
+  scroll-margin-top: 5rem;
+}
+
+/* Simple, graceful scroll reveal animation */
+.gf-scroll-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.gf-scroll-reveal.gf-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Floating Bottom Role Switcher Dock */
+.floating-role-dock {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  z-index: 45;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #E5E7EB;
+  border-radius: 9999px;
+  box-shadow: 0 12px 32px -4px rgba(20, 20, 20, 0.12),
+              0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-role-dock.dock-hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(35px);
+  pointer-events: none;
+}

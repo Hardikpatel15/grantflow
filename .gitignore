@@ -1,0 +1,33 @@
+# Python Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables & secrets (CRITICAL: Never commit to Git)
+.env
+.env.local
+
+# Databases
+*.db
+*.sqlite3
+grantflow.db
+
+# Uploaded receipts / temporary files
+uploads/
+scratch/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

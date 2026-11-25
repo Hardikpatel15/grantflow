@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrantFlow — University Research Grant &amp; Audit Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts & Fontshare: General Sans, Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700,800,900&display=swap" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-white text-[#141414] font-['General_Sans',sans-serif] min-h-screen flex flex-col selection:bg-[#1351AA] selection:text-white overflow-x-hidden relative">
+
+  <!-- Header & Navigation Bar -->
+  <header class="bg-white/95 backdrop-blur-sm border-b border-[#E5E7EB] sticky top-0 z-40 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+      
+      <!-- Brand Logo (Redirects to Starting Landing Page) + Gateway Back Link -->
+      <div class="flex items-center space-x-3">
+        <a href="/" class="flex items-center space-x-3 cursor-pointer group" title="Return to GrantFlow Starting Page">
+          <div class="w-9 h-9 rounded-xl bg-[#1351AA] group-hover:bg-[#2563EB] flex items-center justify-center text-white font-bold shadow-sm transition-colors duration-300">
+            <i class="fa-solid fa-graduation-cap text-base"></i>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-lg font-bold tracking-tight text-[#141414] group-hover:text-[#2563EB] transition-colors duration-300">Grant<span class="text-[#1351AA]">Flow</span></span>
+            <span class="text-[11px] bg-[#F8F9FA] text-[#1F2937] font-medium px-2.5 py-0.5 rounded-full border border-[#E5E7EB] group-hover:border-[#60A5FA] transition-colors duration-300">Research Finance</span>
+          </div>
+        </a>
+
+        <a href="/" class="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#141414] hover:text-[#2563EB] hover:border-[#60A5FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] bg-white px-2.5 py-1 rounded-md transition-all">
+          <span>&larr;</span>
+          <span>GATEWAY</span>
+        </a>
+      </div>
+
+      <!-- Restrained Role Selector Component (Student Scholar, PI, Auditor, Dean) -->
+      <div class="hidden lg:flex items-center space-x-1 bg-[#F8F9FA] p-1 rounded-xl border border-[#E5E7EB]">
+        <span class="text-[11px] font-semibold text-[#374151] px-2.5 uppercase tracking-wider font-mono">Role</span>
+        <button id="btn-role-scholar" onclick="quickLogin('scholar@university.edu', 'scholar123')" class="role-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF]" title="Research Scholar">
+          <i class="fa-solid fa-user-graduate mr-1.5 text-xs text-[#3B7AD9]"></i>Scholar
+        </button>
+        <button id="btn-role-pi" onclick="quickLogin('pi@university.edu', 'pi123')" class="role-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF]" title="Principal Investigator">
+          <i class="fa-solid fa-chalkboard-user mr-1.5 text-xs text-[#1351AA]"></i>PI (Prof)
+        </button>
+        <button id="btn-role-auditor" onclick="quickLogin('auditor@university.edu', 'auditor123')" class="role-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF]" title="Finance Auditor">
+          <i class="fa-solid fa-shield-halved mr-1.5 text-xs text-[#1F8A4C]"></i>Auditor
+        </button>
+        <button id="btn-role-dean" onclick="quickLogin('dean@university.edu', 'dean123')" class="role-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF]" title="University Dean">
+          <i class="fa-solid fa-building-columns mr-1.5 text-xs text-[#374151]"></i>Dean
+        </button>
+      </div>
+
+      <!-- User Profile Card & Sign In Trigger -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div id="user-badge" class="flex items-center space-x-2.5 bg-white border border-[#E5E7EB] px-3 py-1.5 rounded-xl shadow-xs">
+          <div class="w-7 h-7 rounded-lg bg-[#1351AA]/10 text-[#1351AA] border border-[#1351AA]/25 flex items-center justify-center font-bold text-xs font-['JetBrains_Mono']" id="user-initials">--</div>
+          <div class="text-left hidden sm:block">
+            <div class="flex items-center gap-1.5">
+              <p class="text-xs font-bold text-[#141414] leading-tight" id="user-name">Loading...</p>
+              <button onclick="openEditNameModal()" class="text-[#374151] hover:text-[#1351AA] transition p-0.5" title="Edit Profile Name">
+                <i class="fa-solid fa-pen text-[10px]"></i>
+              </button>
+            </div>
+            <p class="text-[11px] text-[#374151] font-medium leading-tight mt-0.5" id="user-role-text">Checking permissions</p>
+          </div>
+        </div>
+
+        <button onclick="openLoginModal()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#1351AA] text-white hover:bg-[#0D3B7D] transition shadow-xs">
+          <i class="fa-solid fa-arrow-right-to-bracket text-[11px]"></i>
+          <span>Sign In / Switch</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Role Notification Alert Subheader with Edit Name Option -->
+  <div id="role-alert-bar" class="bg-[#F8F9FA] border-b border-[#E5E7EB] py-2 px-4 text-center text-xs text-[#1F2937] flex flex-wrap items-center justify-center gap-2.5">
+    <div class="flex items-center space-x-2">
+      <div class="w-2 h-2 rounded-full bg-[#1351AA]"></div>
+      <span id="role-description-banner">Active Role: Scholar. You can submit purchase claims and upload invoice receipts.</span>
+    </div>
+    <button onclick="openEditNameModal()" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#1351AA] hover:text-[#0D3B7D] bg-[#1351AA]/10 hover:bg-[#1351AA]/20 px-2.5 py-1 rounded-lg transition" title="Edit your name for this role">
+      <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+      <span>Edit Role Name</span>
+    </button>
+  </div>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6 relative z-10">
+
+    <!-- Ascora Cybernetic Hero Banner (Modernist Palette) -->
+    <div class="gf-card border-beam-card p-5 relative overflow-hidden bg-gradient-to-r from-white via-[#F5F4F0] to-white border border-[#C7C7C7] shadow-sm">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 relative z-10">
+        <div class="space-y-1.5">
+          <div class="inline-flex items-center space-x-2 bg-[#1351AA]/10 border border-[#1351AA]/25 px-3 py-1 rounded-full">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1351AA] opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-[#1351AA]"></span>
+            </span>
+            <span class="text-[11px] font-bold text-[#1351AA] tracking-wider uppercase font-['JetBrains_Mono']">ASCORA LIVE TELEMETRY CORE</span>
+          </div>
+          <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-[#141414] flex items-center gap-2">
+            <span class="shimmer-text">GrantFlow &bull; University Research &amp; Audit Portal</span>
+          </h1>
+          <p class="text-xs text-[#1F2937] max-w-3xl leading-relaxed">
+            Autonomous multi-tenant grant ceiling enforcement with 3NF relational integrity, pessimistic row-level locking (<code class="font-mono text-[#1351AA]">SELECT FOR UPDATE</code>), and immutable cryptographic audit logging.
+          </p>
+        </div>
+
+        <!-- Telemetry Ticker Badges -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full lg:w-auto text-[10px] font-mono shrink-0">
+          <div class="bg-white border border-[#E5E7EB] px-2.5 py-1.5 rounded-lg flex items-center space-x-2 hover:border-[#60A5FA] transition-colors shadow-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#1F8A4C]"></span>
+            <span class="text-[#1F2937]">ACID 3NF Engine</span>
+          </div>
+          <div class="bg-white border border-[#E5E7EB] px-2.5 py-1.5 rounded-lg flex items-center space-x-2 hover:border-[#60A5FA] transition-colors shadow-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#1351AA]"></span>
+            <span class="text-[#1F2937]">Ceiling Triggers</span>
+          </div>
+          <div class="bg-white border border-[#E5E7EB] px-2.5 py-1.5 rounded-lg flex items-center space-x-2 hover:border-[#60A5FA] transition-colors shadow-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#3B7AD9]"></span>
+            <span class="text-[#1F2937]">Azure Blob Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky In-Page Anchor Navigation Bar -->
+    <div class="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-[#E5E7EB] py-2 flex items-center space-x-1.5 text-xs font-semibold overflow-x-auto shadow-xs">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-3.5 py-1.5 rounded-lg flex items-center space-x-2 text-[#1351AA] bg-[#1351AA]/10 font-bold transition-all whitespace-nowrap">
+        <i class="fa-solid fa-chart-pie text-xs"></i>
+        <span>1. Financial KPIs</span>
+      </button>
+      <button onclick="switchTab('grants')" id="tab-grants" class="tab-btn px-3.5 py-1.5 rounded-lg flex items-center space-x-2 text-[#374151] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition-all whitespace-nowrap">
+        <i class="fa-solid fa-folder-tree text-xs"></i>
+        <span>2. Research Grants</span>
+      </button>
+      <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn px-3.5 py-1.5 rounded-lg flex items-center space-x-2 text-[#374151] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition-all whitespace-nowrap">
+        <i class="fa-solid fa-file-invoice-dollar text-xs"></i>
+        <span>3. Claims &amp; Invoices</span>
+      </button>
+      <button onclick="switchTab('audit')" id="tab-audit" class="tab-btn px-3.5 py-1.5 rounded-lg flex items-center space-x-2 text-[#374151] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition-all whitespace-nowrap">
+        <i class="fa-solid fa-shield-halved text-xs"></i>
+        <span>4. Security &amp; Audit</span>
+      </button>
+      <button onclick="switchTab('powerbi')" id="tab-powerbi" class="tab-btn px-3.5 py-1.5 rounded-lg flex items-center space-x-2 text-[#374151] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition-all whitespace-nowrap">
+        <i class="fa-solid fa-database text-xs"></i>
+        <span>5. DP-900 &amp; Power BI</span>
+      </button>
+      <button onclick="scrollPageDown()" id="btn-move-down" class="ml-auto px-3.5 py-1.5 rounded-lg flex items-center space-x-1.5 bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] hover:text-[#1D4ED8] border border-[#BFDBFE] font-bold transition-all whitespace-nowrap shrink-0" title="Automatically scroll down to the next section">
+        <i class="fa-solid fa-angles-down text-xs"></i>
+        <span>Move Down</span>
+      </button>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: EXECUTIVE FINANCIAL DASHBOARD -->
+    <!-- ======================================================== -->
+    <section id="section-dashboard" class="gf-scroll-section gf-scroll-reveal space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-1 border-b border-[#E5E7EB]">
+        <div>
+          <h2 class="text-base font-bold text-[#141414] tracking-tight flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-[#1351AA] rounded-xs inline-block"></span>
+            <span>Section 1 &bull; Financial Analytics &amp; Real-Time KPIs</span>
+          </h2>
+          <p class="text-xs text-[#374151]">Live grant utilization telemetry, burn-rates, and pending approval ceiling checks</p>
+        </div>
+        <span class="text-[10px] font-mono font-bold text-[#1351AA] bg-[#1351AA]/10 px-2.5 py-1 rounded-full uppercase">Live Synced</span>
+      </div>
+      
+      <!-- Financial Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="kpi-cards-grid">
+        
+        <!-- Total Sanctioned (Cobalt Accent) -->
+        <div class="gf-card border-beam-card p-5 group gf-animate-in bg-white border border-[#C7C7C7]">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-[#374151] uppercase tracking-wider font-mono">Total Sanctioned</span>
+            <div class="w-8 h-8 rounded-lg bg-[#1351AA]/10 border border-[#1351AA]/25 text-[#1351AA] flex items-center justify-center text-xs">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <span class="text-2xl font-bold text-[#141414] tracking-tight font-['JetBrains_Mono']" id="kpi-sanctioned">₹0.00</span>
+            <p class="text-xs text-[#374151] mt-1"><span id="kpi-grant-count" class="font-bold text-[#141414]">0</span> Active Projects</p>
+          </div>
+        </div>
+
+        <!-- Total Spent (Emerald Green Accent) -->
+        <div class="gf-card border-beam-card p-5 group gf-animate-in bg-white border border-[#C7C7C7]">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-[#374151] uppercase tracking-wider font-mono">Total Spent</span>
+            <div class="w-8 h-8 rounded-lg bg-[#1F8A4C]/10 border border-[#1F8A4C]/25 text-[#1F8A4C] flex items-center justify-center text-xs">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <span class="text-2xl font-bold text-[#1F8A4C] tracking-tight font-['JetBrains_Mono']" id="kpi-spent">₹0.00</span>
+            <p class="text-xs text-[#374151] mt-1"><span id="kpi-utilization-rate" class="font-bold text-[#141414]">0%</span> Overall Utilization</p>
+          </div>
+        </div>
+
+        <!-- Remaining Balance (Soft Cobalt Accent) -->
+        <div class="gf-card border-beam-card p-5 group gf-animate-in bg-white border border-[#C7C7C7]">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-[#374151] uppercase tracking-wider font-mono">Remaining Balance</span>
+            <div class="w-8 h-8 rounded-lg bg-[#3B7AD9]/10 border border-[#3B7AD9]/25 text-[#3B7AD9] flex items-center justify-center text-xs">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <span class="text-2xl font-bold text-[#141414] tracking-tight font-['JetBrains_Mono']" id="kpi-remaining">₹0.00</span>
+            <p class="text-xs text-[#374151] mt-1">Available for Allocations</p>
+          </div>
+        </div>
+
+        <!-- Pending Review (Amber Accent) -->
+        <div class="gf-card border-beam-card p-5 group gf-animate-in bg-white border border-[#C7C7C7]">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-[#374151] uppercase tracking-wider font-mono">Pending Review</span>
+            <div class="w-8 h-8 rounded-lg bg-[#C97A16]/10 border border-[#C97A16]/25 text-[#C97A16] flex items-center justify-center text-xs">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <span class="text-2xl font-bold text-[#141414] tracking-tight font-['JetBrains_Mono']" id="kpi-pending-count">0 Claims</span>
+            <p class="text-xs text-[#374151] mt-1">Valued at <span id="kpi-pending-amount" class="text-[#141414] font-semibold font-['JetBrains_Mono']">₹0.00</span></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Interactive Graph Selector & Charts -->
+      <div class="space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl px-4 py-2.5">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-[#1351AA] text-xs"></i>
+            <span class="text-xs font-bold text-[#111827] tracking-tight">Select Graph View</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+            <button type="button" onclick="selectGraphView('all')" id="graph-btn-all" class="graph-view-btn px-3 py-1.5 rounded-lg bg-[#1351AA] text-white transition-all duration-300 shadow-xs">
+              <i class="fa-solid fa-grip mr-1 text-[11px]"></i>All Graphs
+            </button>
+            <button type="button" onclick="selectGraphView('bar')" id="graph-btn-bar" class="graph-view-btn px-3 py-1.5 rounded-lg text-[#1F2937] bg-white border border-[#E5E7EB] hover:text-[#2563EB] hover:bg-[#EFF6FF] hover:border-[#60A5FA] transition-all duration-300">
+              <i class="fa-solid fa-chart-column mr-1 text-[11px]"></i>Allocation Bar
+            </button>
+            <button type="button" onclick="selectGraphView('doughnut')" id="graph-btn-doughnut" class="graph-view-btn px-3 py-1.5 rounded-lg text-[#1F2937] bg-white border border-[#E5E7EB] hover:text-[#2563EB] hover:bg-[#EFF6FF] hover:border-[#60A5FA] transition-all duration-300">
+              <i class="fa-solid fa-chart-pie mr-1 text-[11px]"></i>Category Doughnut
+            </button>
+            <button type="button" onclick="selectGraphView('line')" id="graph-btn-line" class="graph-view-btn px-3 py-1.5 rounded-lg text-[#1F2937] bg-white border border-[#E5E7EB] hover:text-[#2563EB] hover:bg-[#EFF6FF] hover:border-[#60A5FA] transition-all duration-300">
+              <i class="fa-solid fa-arrow-trend-up mr-1 text-[11px]"></i>Burn-Rate Line
+            </button>
+          </div>
+        </div>
+
+        <div id="charts-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 transition-all duration-500">
+          
+          <!-- Category Fund Allocation vs Spend / Doughnut -->
+          <div id="chart-card-category" class="gf-card gf-chart-panel p-6 gf-animate-slide-left bg-white border border-[#C7C7C7]">
+            <div class="flex justify-between items-center mb-5">
+              <div>
+                <h3 id="category-chart-title" class="text-sm font-bold text-[#141414] flex items-center tracking-tight">
+                  <i class="fa-solid fa-chart-column text-[#1351AA] mr-2"></i> Category Fund Allocation vs Spend
+                </h3>
+                <p id="category-chart-subtitle" class="text-xs text-[#374151] mt-0.5">Cobalt (Allocated) vs. Light Blue (Spent)</p>
+              </div>
+              <span class="text-[10px] font-mono text-[#1F2937] bg-[#F8F9FA] border border-[#E5E7EB] px-2 py-0.5 rounded-md">3NF BREAKDOWN</span>
+            </div>
+            <div class="relative h-64 flex items-center justify-center">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Cumulative Expenditure Burn-Rate -->
+          <div id="chart-card-burnrate" class="gf-card gf-chart-panel p-6 gf-animate-slide-right bg-white border border-[#E5E7EB]">
+            <div class="flex justify-between items-center mb-5">
+              <div>
+                <h3 class="text-sm font-bold text-[#141414] flex items-center tracking-tight">
+                  <i class="fa-solid fa-arrow-trend-up text-[#1351AA] mr-2"></i> Cumulative Expenditure Burn-Rate
+                </h3>
+                <p class="text-xs text-[#374151] mt-0.5">Chronological Approved Expenditure</p>
+              </div>
+              <span class="text-[10px] font-mono text-[#1F2937] bg-[#F8F9FA] border border-[#E5E7EB] px-2 py-0.5 rounded-md">TIMELINE</span>
+            </div>
+            <div class="relative h-64 flex items-center justify-center">
+              <canvas id="burnRateChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: RESEARCH GRANTS -->
+    <!-- ======================================================== -->
+    <section id="section-grants" class="gf-scroll-section gf-scroll-reveal space-y-6 pt-10 border-t border-[#E5E7EB]">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-1 border-b border-[#E5E7EB]">
+        <div>
+          <h2 class="text-base font-bold text-[#141414] tracking-tight flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-[#1351AA] rounded-xs inline-block"></span>
+            <span>Section 2 &bull; Sanctioned Research Grants</span>
+          </h2>
+          <p class="text-xs text-[#374151]">Institutional projects with category-level budget ceilings (3NF normalized)</p>
+        </div>
+        <button id="btn-open-create-grant" onclick="openGrantModal()" class="hidden btn-primary text-xs px-4 py-2 rounded-xl flex items-center space-x-2">
+          <i class="fa-solid fa-plus text-[11px]"></i>
+          <span>Initialize New Grant</span>
+        </button>
+      </div>
+
+      <!-- Grant Cards Grid -->
+      <div id="grants-list-container" class="grid grid-cols-1 gap-5">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 3: EXPENSE CLAIMS & INVOICES -->
+    <!-- ======================================================== -->
+    <section id="section-expenses" class="gf-scroll-section gf-scroll-reveal space-y-6 pt-10 border-t border-[#E5E7EB]">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-1 border-b border-[#E5E7EB]">
+        <div>
+          <h2 class="text-base font-bold text-[#141414] tracking-tight flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-[#1351AA] rounded-xs inline-block"></span>
+            <span>Section 3 &bull; Expense Claims &amp; Invoices</span>
+          </h2>
+          <p class="text-xs text-[#374151]">Reimbursement requests, digital invoice evidence, and ceiling evaluations</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <select id="expense-status-filter" onchange="loadExpenses()" class="bg-white border border-[#E5E7EB] text-[#141414] text-xs rounded-xl px-3 py-2 outline-none">
+            <option value="">All Statuses</option>
+            <option value="PENDING">Pending Only</option>
+            <option value="APPROVED">Approved Only</option>
+            <option value="REJECTED">Rejected Only</option>
+          </select>
+          <button onclick="openExpenseModal()" class="btn-primary text-xs px-4 py-2 rounded-xl flex items-center space-x-2">
+            <i class="fa-solid fa-receipt text-[11px]"></i>
+            <span>Submit New Claim</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Expenses Table Container -->
+      <div class="gf-card overflow-hidden bg-white border border-[#E5E7EB] shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-[#141414]">
+            <thead class="bg-[#F8F9FA] text-[#374151] uppercase text-[10px] font-semibold tracking-wider border-b border-[#E5E7EB]">
+              <tr>
+                <th class="px-6 py-4">Claim ID &amp; Date</th>
+                <th class="px-6 py-4">Grant &amp; Category</th>
+                <th class="px-6 py-4">Vendor &amp; Description</th>
+                <th class="px-6 py-4">Amount</th>
+                <th class="px-6 py-4">Evidence</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-right">Review Action</th>
+              </tr>
+            </thead>
+            <tbody id="expenses-table-body" class="divide-y divide-[#E5E7EB]">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 4: AUDIT TRAIL & SECURITY -->
+    <!-- ======================================================== -->
+    <section id="section-audit" class="gf-scroll-section gf-scroll-reveal space-y-6 pt-10 border-t border-[#E5E7EB]">
+      
+      <div class="pb-1 border-b border-[#E5E7EB]">
+        <h2 class="text-base font-bold text-[#141414] tracking-tight flex items-center gap-2">
+          <span class="w-2.5 h-2.5 bg-[#1351AA] rounded-xs inline-block"></span>
+          <span>Section 4 &bull; Security &amp; Governance Audit Trail</span>
+        </h2>
+        <p class="text-xs text-[#374151]">Immutable ledger logging authentication events, claim approvals, and ceiling checks</p>
+      </div>
+
+      <div class="gf-card overflow-hidden bg-white border border-[#E5E7EB] shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-[#141414]">
+            <thead class="bg-[#F8F9FA] text-[#374151] uppercase text-[10px] font-semibold tracking-wider border-b border-[#E5E7EB]">
+              <tr>
+                <th class="px-6 py-4">Timestamp</th>
+                <th class="px-6 py-4">Actor</th>
+                <th class="px-6 py-4">Action Type</th>
+                <th class="px-6 py-4">Target Entity</th>
+                <th class="px-6 py-4">Audit Details</th>
+                <th class="px-6 py-4">IP Address</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body" class="divide-y divide-[#E5E7EB]">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 5: DP-900 AZURE DATA CONCEPTS & POWER BI -->
+    <!-- ======================================================== -->
+    <section id="section-powerbi" class="gf-scroll-section gf-scroll-reveal space-y-6 pt-10 border-t border-[#E5E7EB]">
+      
+      <div class="pb-1 border-b border-[#E5E7EB]">
+        <h2 class="text-base font-bold text-[#141414] tracking-tight flex items-center gap-2">
+          <span class="w-2.5 h-2.5 bg-[#1351AA] rounded-xs inline-block"></span>
+          <span>Section 5 &bull; DP-900: Azure Data Concepts &amp; Power BI</span>
+        </h2>
+        <p class="text-xs text-[#374151]">Data classification matrix, relational schema export, and analytics feeds</p>
+      </div>
+
+      <!-- Data Classification Matrix Card -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- Structured -->
+        <div class="gf-card p-6 gf-animate-scale bg-white border border-[#E5E7EB]">
+          <div class="w-8 h-8 rounded-lg bg-[#1351AA]/10 border border-[#1351AA]/25 text-[#1351AA] flex items-center justify-center mb-4 text-xs">
+            <i class="fa-solid fa-table"></i>
+          </div>
+          <h4 class="text-sm font-bold text-[#141414] tracking-tight">Structured Data</h4>
+          <span class="text-xs text-[#1351AA] font-semibold">Azure Database for PostgreSQL</span>
+          <p class="text-xs text-[#1F2937] mt-2.5 leading-relaxed">
+            Normalized 3NF relational tables (<code class="text-[#1351AA] bg-[#F8F9FA] px-1 py-0.5 rounded border border-[#E5E7EB]">users</code>, <code class="text-[#1351AA] bg-[#F8F9FA] px-1 py-0.5 rounded border border-[#E5E7EB]">grants</code>, <code class="text-[#1351AA] bg-[#F8F9FA] px-1 py-0.5 rounded border border-[#E5E7EB]">budget_heads</code>, <code class="text-[#1351AA] bg-[#F8F9FA] px-1 py-0.5 rounded border border-[#E5E7EB]">expense_requests</code>) providing ACID transactional guarantees.
+          </p>
+        </div>
+
+        <!-- Unstructured -->
+        <div class="gf-card p-6 gf-animate-scale bg-white border border-[#E5E7EB]">
+          <div class="w-8 h-8 rounded-lg bg-[#3B7AD9]/10 border border-[#3B7AD9]/25 text-[#3B7AD9] flex items-center justify-center mb-4 text-xs">
+            <i class="fa-solid fa-file-pdf"></i>
+          </div>
+          <h4 class="text-sm font-bold text-[#141414] tracking-tight">Unstructured Data</h4>
+          <span class="text-xs text-[#3B7AD9] font-semibold">Azure Blob Storage</span>
+          <p class="text-xs text-[#1F2937] mt-2.5 leading-relaxed">
+            Scanned PDF vendor receipts, purchase orders, and expenditure invoices stored securely in the <code class="text-[#1351AA] bg-[#F8F9FA] px-1 py-0.5 rounded border border-[#E5E7EB]">grantflow-invoices</code> container.
+          </p>
+        </div>
+
+        <!-- Semi-Structured -->
+        <div class="gf-card p-6 gf-animate-scale bg-white border border-[#E5E7EB]">
+          <div class="w-8 h-8 rounded-lg bg-[#7A7A7A]/10 border border-[#7A7A7A]/25 text-[#1F2937] flex items-center justify-center mb-4 text-xs">
+            <i class="fa-solid fa-code"></i>
+          </div>
+          <h4 class="text-sm font-bold text-[#141414] tracking-tight">Semi-Structured Data</h4>
+          <span class="text-xs text-[#1F2937] font-semibold">JSON Telemetry &amp; Audit Logs</span>
+          <p class="text-xs text-[#1F2937] mt-2.5 leading-relaxed">
+            Dynamic request metadata, vendor tax breakdowns, and immutable audit payloads formatted as JSON payloads in the security pipeline.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Power BI Direct Connector Card -->
+      <div class="gf-card p-6 space-y-4 bg-white border border-[#E5E7EB]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-xl bg-[#1351AA]/10 border border-[#1351AA]/25 text-[#1351AA] flex items-center justify-center text-sm">
+              <i class="fa-solid fa-chart-column"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-[#141414] tracking-tight">Microsoft Power BI Live Web Feed</h3>
+              <p class="text-xs text-[#374151]">Endpoint ready for Power BI Desktop Web Data Connector</p>
+            </div>
+          </div>
+          <a href="/api/analytics/powerbi-export" target="_blank" class="btn-secondary text-xs px-4 py-2 flex items-center space-x-2 self-start sm:self-auto">
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            <span>Inspect Live JSON Feed</span>
+          </a>
+        </div>
+        <div class="bg-[#F8F9FA] rounded-xl p-3 border border-[#E5E7EB] flex items-center justify-between text-xs font-['JetBrains_Mono'] text-[#1F2937]">
+          <span id="powerbi-url-display" class="truncate">http://localhost:8000/api/analytics/powerbi-export</span>
+          <button onclick="copyPowerBiUrl()" class="text-[#1351AA] hover:text-[#0D3B7D] ml-4 flex items-center space-x-1 shrink-0 font-sans font-semibold">
+            <i class="fa-regular fa-copy text-xs"></i> <span>Copy</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Floating Persistent Role Switcher Dock (Appears smoothly when scrolling down) -->
+    <div id="floating-role-dock" class="floating-role-dock dock-hidden">
+      <div class="flex items-center gap-2 pr-3 border-r border-[#E5E7EB]">
+        <span class="w-2 h-2 rounded-full bg-[#1351AA] animate-pulse"></span>
+        <span id="dock-role-name" class="text-xs font-bold text-[#141414] max-w-[130px] truncate">Scholar</span>
+        <button onclick="openEditNameModal()" class="text-[#374151] hover:text-[#1351AA] transition p-1" title="Edit Role Display Name">
+          <i class="fa-solid fa-pen-to-square text-[11px]"></i>
+        </button>
+      </div>
+      <div class="flex items-center space-x-1">
+        <button onclick="quickLogin('scholar@university.edu', 'scholar123')" id="dock-btn-scholar" class="role-btn px-2.5 py-1 rounded-full text-xs font-medium text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition">
+          <i class="fa-solid fa-user-graduate text-[#3B7AD9] mr-1 text-[11px]"></i>Scholar
+        </button>
+        <button onclick="quickLogin('pi@university.edu', 'pi123')" id="dock-btn-pi" class="role-btn px-2.5 py-1 rounded-full text-xs font-medium text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition">
+          <i class="fa-solid fa-chalkboard-user text-[#1351AA] mr-1 text-[11px]"></i>PI
+        </button>
+        <button onclick="quickLogin('auditor@university.edu', 'auditor123')" id="dock-btn-auditor" class="role-btn px-2.5 py-1 rounded-full text-xs font-medium text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition">
+          <i class="fa-solid fa-shield-halved text-[#1F8A4C] mr-1 text-[11px]"></i>Auditor
+        </button>
+        <button onclick="quickLogin('dean@university.edu', 'dean123')" id="dock-btn-dean" class="role-btn px-2.5 py-1 rounded-full text-xs font-medium text-[#1F2937] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition">
+          <i class="fa-solid fa-building-columns text-[#374151] mr-1 text-[11px]"></i>Dean
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 1: SUBMIT NEW EXPENSE CLAIM -->
+  <!-- ======================================================== -->
+  <div id="modal-expense" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 gf-modal-backdrop">
+    <div class="bg-white border border-[#141414] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-5 gf-modal-card text-[#141414]">
+      <div class="flex justify-between items-center border-b border-[#C7C7C7] pb-3">
+        <h3 class="text-sm font-bold text-[#141414] flex items-center tracking-tight">
+          <i class="fa-solid fa-receipt text-[#1351AA] mr-2"></i> Submit Expense Claim
+        </h3>
+        <button onclick="closeExpenseModal()" class="text-[#374151] hover:text-[#2563EB] transition">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form id="form-expense" onsubmit="handleExpenseSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Target Budget Head</label>
+          <select id="expense-budget-head-id" required class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+            <!-- Dynamically populated with active budget heads -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Amount (₹ INR)</label>
+            <input type="number" step="0.01" id="expense-amount" required placeholder="e.g. 25000" class="w-full rounded-xl px-3 py-2 text-xs font-['JetBrains_Mono'] text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Vendor Name</label>
+            <input type="text" id="expense-vendor" required placeholder="e.g. Dell Enterprise" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Item Description / Purpose</label>
+          <textarea id="expense-description" required rows="2" placeholder="e.g. RAM upgrade and high-speed SSD for deep learning workstation" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Invoice Receipt (Azure Blob Upload)</label>
+          <input type="file" id="expense-file" accept=".pdf,.png,.jpg,.jpeg" class="w-full text-xs text-[#374151] file:mr-4 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#1351AA] file:text-white hover:file:bg-[#0D3B7D] cursor-pointer">
+          <p class="text-[11px] text-[#374151] mt-1 font-mono">Accepts PDF, JPG, or PNG receipts. Uploaded directly to Azure container.</p>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-3 border-t border-[#C7C7C7]">
+          <button type="button" onclick="closeExpenseModal()" class="px-4 py-2 text-xs font-medium text-[#374151] hover:text-[#2563EB] transition">Cancel</button>
+          <button type="submit" id="btn-submit-expense" class="btn-primary text-xs px-5 py-2.5">
+            Submit Claim
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 2: INITIALIZE NEW GRANT (PI / Auditor) -->
+  <!-- ======================================================== -->
+  <div id="modal-grant" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 gf-modal-backdrop">
+    <div class="bg-white border border-[#141414] rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-5 gf-modal-card text-[#141414]">
+      <div class="flex justify-between items-center border-b border-[#C7C7C7] pb-3">
+        <h3 class="text-sm font-bold text-[#141414] flex items-center tracking-tight">
+          <i class="fa-solid fa-folder-plus text-[#1351AA] mr-2"></i> Sanction New Research Grant
+        </h3>
+        <button onclick="closeGrantModal()" class="text-[#374151] hover:text-[#2563EB] transition">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form id="form-grant" onsubmit="handleGrantSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Grant Project Title</label>
+          <input type="text" id="grant-title" required placeholder="e.g. Next-Gen 6G Wireless Testbed Architecture" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Grant Code</label>
+            <input type="text" id="grant-code" required placeholder="e.g. DST-2026-99" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] font-['JetBrains_Mono'] bg-[#F5F4F0] border border-[#C7C7C7]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Funding Agency</label>
+            <input type="text" id="grant-agency" required placeholder="e.g. DST-SERB or DRDO" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Total Sanctioned Amount (₹)</label>
+          <input type="number" step="0.01" id="grant-total" required placeholder="e.g. 2000000" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] font-['JetBrains_Mono'] bg-[#F5F4F0] border border-[#C7C7C7]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Start Date</label>
+            <input type="date" id="grant-start" required class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">End Date</label>
+            <input type="date" id="grant-end" required class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F5F4F0] border border-[#C7C7C7]">
+          </div>
+        </div>
+
+        <!-- Budget Head Allocations -->
+        <div class="border-t border-[#C7C7C7] pt-3">
+          <p class="text-xs font-semibold text-[#374151] uppercase tracking-wider mb-2 font-mono">Category Head Allocations (Must Sum $\le$ Total)</p>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <label class="text-[11px] text-[#374151] font-mono">Equipment (₹)</label>
+              <input type="number" step="0.01" id="alloc-equipment" required placeholder="800000" class="w-full rounded-lg px-2.5 py-1.5 text-[#141414] font-['JetBrains_Mono'] bg-[#F5F4F0] border border-[#C7C7C7]">
+            </div>
+            <div>
+              <label class="text-[11px] text-[#374151] font-mono">Consumables (₹)</label>
+              <input type="number" step="0.01" id="alloc-consumables" required placeholder="400000" class="w-full rounded-lg px-2.5 py-1.5 text-[#141414] font-['JetBrains_Mono'] bg-[#F5F4F0] border border-[#C7C7C7]">
+            </div>
+            <div>
+              <label class="text-[11px] text-[#374151] font-mono">Travel (₹)</label>
+              <input type="number" step="0.01" id="alloc-travel" required placeholder="200000" class="w-full rounded-lg px-2.5 py-1.5 text-[#141414] font-['JetBrains_Mono'] bg-[#F5F4F0] border border-[#C7C7C7]">
+            </div>
+            <div>
+              <label class="text-[11px] text-[#374151] font-mono">Manpower (₹)</label>
+              <input type="number" step="0.01" id="alloc-manpower" required placeholder="600000" class="w-full rounded-lg px-2.5 py-1.5 text-[#141414] font-['JetBrains_Mono'] bg-[#F5F4F0] border border-[#C7C7C7]">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-3 border-t border-[#C7C7C7]">
+          <button type="button" onclick="closeGrantModal()" class="px-4 py-2 text-xs font-medium text-[#374151] hover:text-[#2563EB] transition">Cancel</button>
+          <button type="submit" id="btn-submit-grant" class="btn-primary text-xs px-5 py-2.5">
+            Initialize Grant
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: EDIT ROLE DISPLAY NAME -->
+  <!-- ======================================================== -->
+  <div id="modal-edit-name" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 gf-modal-backdrop">
+    <div class="bg-white border border-[#E5E7EB] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 text-[#141414] relative">
+      <div class="flex justify-between items-center border-b border-[#E5E7EB] pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#1351AA] text-white flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#141414] tracking-tight">Edit Role Display Name</h3>
+            <p class="text-[11px] text-[#374151]">Customize display name & department for any role</p>
+          </div>
+        </div>
+        <button onclick="closeEditNameModal()" class="text-[#374151] hover:text-[#2563EB] transition p-1">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form id="form-edit-name" onsubmit="handleEditNameSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Select Target Role</label>
+          <select id="edit-role-select" onchange="onEditRoleSelectChange()" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+            <option value="scholar@university.edu">Student Scholar (scholar@university.edu)</option>
+            <option value="pi@university.edu">Principal Investigator (pi@university.edu)</option>
+            <option value="auditor@university.edu">Finance Auditor (auditor@university.edu)</option>
+            <option value="dean@university.edu">University Dean (dean@university.edu)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Full Display Name</label>
+          <input type="text" id="edit-full-name" required minlength="2" maxlength="150" placeholder="e.g. Aarav Sharma" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 font-mono">Department (Optional)</label>
+          <input type="text" id="edit-department" placeholder="e.g. Department of Computer Science" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-3 border-t border-[#E5E7EB]">
+          <button type="button" onclick="closeEditNameModal()" class="px-4 py-2 text-xs font-medium text-[#374151] hover:text-[#2563EB] transition">Cancel</button>
+          <button type="submit" id="btn-save-edit-name" class="btn-primary text-xs px-5 py-2.5">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 3: SIGN IN / REGISTER & LIST YOURSELF -->
+  <!-- ======================================================== -->
+  <div id="modal-login" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 gf-modal-backdrop overflow-y-auto">
+    <div class="bg-white border border-[#E5E7EB] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-[#141414] relative gf-modal-card my-auto">
+      <div class="flex justify-between items-center border-b border-[#E5E7EB] pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#1351AA] text-white flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#141414] tracking-tight">GrantFlow Account Access</h3>
+            <p class="text-[11px] text-[#374151]">Sign in or list yourself with your university role</p>
+          </div>
+        </div>
+        <button onclick="closeLoginModal()" class="text-[#374151] hover:text-[#2563EB] transition p-1">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- Mode Switcher: Sign In vs Register / List Yourself -->
+      <div class="grid grid-cols-2 gap-1.5 bg-[#F8FAFC] p-1 rounded-xl border border-[#E5E7EB]">
+        <button type="button" onclick="switchAuthTab('signin')" id="auth-tab-signin" class="py-2 rounded-lg text-xs font-bold bg-[#1351AA] text-white transition-all duration-200">
+          <i class="fa-solid fa-arrow-right-to-bracket mr-1.5"></i>Sign In
+        </button>
+        <button type="button" onclick="switchAuthTab('register')" id="auth-tab-register" class="py-2 rounded-lg text-xs font-bold text-[#374151] hover:text-[#2563EB] hover:bg-[#EFF6FF] transition-all duration-200">
+          <i class="fa-solid fa-user-plus mr-1.5"></i>Register Yourself
+        </button>
+      </div>
+
+      <!-- PANEL A: SIGN IN -->
+      <div id="auth-panel-signin" class="space-y-4">
+        <!-- Quick Role Pickers -->
+        <div class="space-y-2">
+          <label class="block text-[11px] font-bold text-[#374151] uppercase tracking-wider font-mono">Quick Sign In as Demo Role</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="quickLogin('scholar@university.edu', 'scholar123'); closeLoginModal();" class="p-3 text-left rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] hover:border-[#60A5FA] hover:bg-[#EFF6FF] transition group">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-user-graduate text-[#3B7AD9]"></i>
+                <span class="text-xs font-bold text-[#141414] group-hover:text-[#2563EB]">Student Scholar</span>
+              </div>
+              <p class="text-[10px] text-[#374151] mt-1 font-mono">scholar@university.edu</p>
+            </button>
+
+            <button type="button" onclick="quickLogin('pi@university.edu', 'pi123'); closeLoginModal();" class="p-3 text-left rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] hover:border-[#60A5FA] hover:bg-[#EFF6FF] transition group">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-chalkboard-user text-[#1351AA]"></i>
+                <span class="text-xs font-bold text-[#141414] group-hover:text-[#2563EB]">Principal Inv.</span>
+              </div>
+              <p class="text-[10px] text-[#374151] mt-1 font-mono">pi@university.edu</p>
+            </button>
+
+            <button type="button" onclick="quickLogin('auditor@university.edu', 'auditor123'); closeLoginModal();" class="p-3 text-left rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] hover:border-[#60A5FA] hover:bg-[#EFF6FF] transition group">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-shield-halved text-[#1F8A4C]"></i>
+                <span class="text-xs font-bold text-[#141414] group-hover:text-[#2563EB]">Finance Auditor</span>
+              </div>
+              <p class="text-[10px] text-[#374151] mt-1 font-mono">auditor@university.edu</p>
+            </button>
+
+            <button type="button" onclick="quickLogin('dean@university.edu', 'dean123'); closeLoginModal();" class="p-3 text-left rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] hover:border-[#60A5FA] hover:bg-[#EFF6FF] transition group">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-building-columns text-[#374151]"></i>
+                <span class="text-xs font-bold text-[#141414] group-hover:text-[#2563EB]">University Dean</span>
+              </div>
+              <p class="text-[10px] text-[#374151] mt-1 font-mono">dean@university.edu</p>
+            </button>
+          </div>
+        </div>
+
+        <div class="relative flex py-1 items-center">
+          <div class="flex-grow border-t border-[#E5E7EB]"></div>
+          <span class="flex-shrink mx-3 text-[10px] font-mono text-[#374151] uppercase">or sign in with email</span>
+          <div class="flex-grow border-t border-[#E5E7EB]"></div>
+        </div>
+
+        <!-- Manual Sign In Form -->
+        <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Email Address</label>
+            <input type="email" id="login-email" required placeholder="name@university.edu" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" id="btn-submit-login" class="w-full py-2.5 px-4 rounded-xl bg-[#1351AA] hover:bg-[#2563EB] text-white text-xs font-bold transition flex items-center justify-center shadow-sm">
+              Sign In <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PANEL B: REGISTER / LIST YOURSELF -->
+      <div id="auth-panel-register" class="hidden space-y-3">
+        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Full Name</label>
+            <input type="text" id="reg-name" required minlength="2" placeholder="e.g. Riya Patel" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Your University Role</label>
+            <select id="reg-role" onchange="onRegisterRoleChange()" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+              <option value="SCHOLAR">Student / Research Scholar</option>
+              <option value="DEAN">University Dean</option>
+              <option value="PI">Principal Investigator (Professor)</option>
+              <option value="FINANCE_AUDITOR">Finance Auditor</option>
+              <option value="CUSTOM">Other / Custom Role (Specify)</option>
+            </select>
+          </div>
+
+          <div id="reg-custom-role-wrap" class="hidden">
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Specify Your Role Title</label>
+            <input type="text" id="reg-custom-role" placeholder="e.g. Lab Coordinator / PhD Fellow" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Department</label>
+            <input type="text" id="reg-department" required placeholder="e.g. Computer Science & Engineering" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Email Address</label>
+            <input type="email" id="reg-email" required placeholder="you@university.edu" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#374151] mb-1">Create Password (min 4 chars)</label>
+            <input type="password" id="reg-password" required minlength="4" placeholder="••••••••" class="w-full rounded-xl px-3 py-2 text-xs text-[#141414] bg-[#F8F9FA] border border-[#E5E7EB] focus:outline-none focus:border-[#1351AA]">
+          </div>
+
+          <div class="pt-1">
+            <button type="submit" id="btn-submit-register" class="w-full py-2.5 px-4 rounded-xl bg-[#1351AA] hover:bg-[#2563EB] text-white text-xs font-bold transition flex items-center justify-center shadow-sm">
+              Create Account &amp; Sign In <i class="fa-solid fa-user-check ml-2 text-xs"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2"></div>
+
+  <!-- App Script -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
