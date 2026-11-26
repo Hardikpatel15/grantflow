@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRANTFLOW — University Research Grant &amp; Expense Audit Portal</title>
+  <meta name="description" content="GrantFlow: University Research Grant & Expense Audit Portal." />
+
+  <!-- General Sans (Fontshare) & JetBrains Mono (Google Fonts) -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        borderRadius: {
+          none: '0px',
+          DEFAULT: '0px',
+        },
+        boxShadow: {
+          none: 'none',
+          DEFAULT: 'none',
+        },
+        extend: {
+          fontFamily: {
+            sans: ['"General Sans"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cream: '#E3E2DE',
+            cobalt: '#1351AA',
+            jet: '#141414',
+            deepgray: '#444343',
+            rule: '#C7C7C7',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Strict Flat Poster Modernist Styling & Choreographed Animations -->
+  <style>
+    *, *::before, *::after {
+      border-radius: 0px !important;
+      box-shadow: none !important;
+      background-image: none !important;
+    }
+
+    html, body {
+      background-color: #E3E2DE;
+      color: #141414;
+      font-family: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===================================================================== */
+    /* 1. LOGO CONTAINER WITH ::BEFORE & ::AFTER ARCHITECTURAL CURTAINS      */
+    /* ===================================================================== */
+    .logo-frame {
+      position: relative;
+      width: 148px;
+      height: 148px;
+      border: 1px solid #C7C7C7;
+      background-color: #E3E2DE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.3s linear;
+    }
+
+    @media (min-width: 640px) {
+      .logo-frame {
+        width: 168px;
+        height: 168px;
+      }
+    }
+
+    /* Initial full-cover curtains (#141414 top half, #1351AA bottom half) */
+    .logo-frame::before,
+    .logo-frame::after {
+      content: '';
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .logo-frame::before {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background-color: #141414;
+      transition:
+        height 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+        width 0.58s cubic-bezier(0.16, 1, 0.3, 1) 0.14s;
+    }
+
+    .logo-frame::after {
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 50%;
+      background-color: #1351AA;
+      transition:
+        height 0.58s cubic-bezier(0.16, 1, 0.3, 1) 0.06s,
+        width 0.58s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    }
+
+    /* Wipe open on page load -> settle into subtle precision corner accents */
+    body.stage-ready .logo-frame::before {
+      height: 3px;
+      width: 28px;
+    }
+
+    body.stage-ready .logo-frame::after {
+      height: 3px;
+      width: 28px;
+    }
+
+    /* Precision frame accent expansion on hover */
+    body.stage-ready .logo-frame:hover {
+      border-color: #141414;
+    }
+
+    body.stage-ready .logo-frame:hover::before {
+      width: 100%;
+      transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.stage-ready .logo-frame:hover::after {
+      width: 100%;
+      transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ===================================================================== */
+    /* 2. BEFORE-TO-AFTER SVG LOGO TRANSFORMATION (0s -> 1.3s)               */
+    /* ===================================================================== */
+    /* BEFORE STATE (0s–0.7s): Monochrome hairline stroke outline draws in */
+    .g-wireframe {
+      stroke-dasharray: 560;
+      stroke-dashoffset: 560;
+      transition:
+        stroke-dashoffset 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.12s,
+        stroke-width 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.72s;
+    }
+
+    body.stage-ready .g-wireframe {
+      stroke-dashoffset: 0;
+      stroke-width: 9;
+    }
+
+    /* Subtle hairline ghost guides for the 3 bars during the Before state */
+    .g-bar-guide {
+      opacity: 0;
+      transition: opacity 0.3s linear 0.25s;
+    }
+
+    body.stage-ready .g-bar-guide {
+      opacity: 0.35;
+    }
+
+    /* AFTER STATE (0.7s–1.3s): 3 minimalist vertical budget bars rise cleanly */
+    .g-bar-fill {
+      transform: scaleY(0);
+      transform-origin: 0px 132px;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.stage-ready .g-bar-1 {
+      transform: scaleY(1);
+      transition-delay: 0.72s;
+    }
+
+    body.stage-ready .g-bar-2 {
+      transform: scaleY(1);
+      transition-delay: 0.82s;
+    }
+
+    body.stage-ready .g-bar-3 {
+      transform: scaleY(1);
+      transition-delay: 0.92s;
+    }
+
+    /* Cobalt blue square audit seal node locks in */
+    .g-seal-node {
+      transform: scale(0);
+      transform-origin: 126px 88px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) 1.02s;
+    }
+
+    body.stage-ready .g-seal-node {
+      transform: scale(1);
+    }
+
+    /* Single clean pulse completing the before-to-after reveal */
+    @keyframes singleSealPulse {
+      0% {
+        opacity: 0.95;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(2.1);
+      }
+    }
+
+    .g-seal-pulse {
+      transform-origin: 126px 88px;
+      opacity: 0;
+    }
+
+    body.stage-ready .g-seal-pulse {
+      animation: singleSealPulse 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.06s 1 forwards;
+    }
+
+    /* ===================================================================== */
+    /* 3. STAGGERED CONTENT REVEALS (0.8s -> 1.2s)                           */
+    /* ===================================================================== */
+    .rule-draw {
+      transform: scaleX(0);
+      transform-origin: center center;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.78s;
+    }
+
+    body.stage-ready .rule-draw {
+      transform: scaleX(1);
+    }
+
+    .mask-wordmark {
+      display: block;
+      overflow: hidden;
+    }
+
+    .mask-wordmark > span {
+      display: block;
+      transform: translateY(105%);
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.84s;
+      will-change: transform;
+    }
+
+    body.stage-ready .mask-wordmark > span {
+      transform: translateY(0%);
+    }
+
+    .reveal-copy {
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.96s,
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.96s;
+      will-change: opacity, transform;
+    }
+
+    body.stage-ready .reveal-copy {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-cta {
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.2s,
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.2s;
+      will-change: opacity, transform;
+    }
+
+    body.stage-ready .reveal-cta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===================================================================== */
+    /* 4. SINGLE POSTER CTA BUTTON WITH LEFT-TO-RIGHT ::BEFORE CURTAIN       */
+    /* ===================================================================== */
+    .portal-cta {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 18px 36px;
+      background-color: #1351AA;
+      color: #E3E2DE;
+      border: 1px solid #1351AA;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.28s linear;
+    }
+
+    .portal-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: #141414;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 0;
+    }
+
+    .portal-cta:hover,
+    .portal-cta:focus-visible {
+      border-color: #141414;
+      outline: none;
+    }
+
+    .portal-cta:hover::before,
+    .portal-cta:focus-visible::before {
+      transform: scaleX(1);
+    }
+
+    .portal-cta > span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .portal-cta .cta-arrow {
+      display: inline-block;
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .portal-cta:hover .cta-arrow,
+    .portal-cta:focus-visible .cta-arrow {
+      transform: translateX(5px);
+    }
+
+    /* ===================================================================== */
+    /* 5. FULL-SCREEN 0.55S JET BLACK HANDOFF WIPE OVERLAY                   */
+    /* ===================================================================== */
+    #handoff-wipe {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background-color: #141414;
+      color: #E3E2DE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    #handoff-wipe.is-active {
+      transform: translateY(0%);
+      pointer-events: auto;
+    }
+
+    #handoff-progress {
+      width: 0%;
+      height: 4px;
+      background-color: #1351AA;
+      transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] w-full bg-cream text-jet flex items-center justify-center px-6 py-10 selection:bg-cobalt selection:text-cream">
+
+  <!-- =================================================================== -->
+  <!-- CENTERED SINGLE-COLUMN COMPOSITION                                  -->
+  <!-- =================================================================== -->
+  <main class="w-full max-w-xl mx-auto flex flex-col items-center text-center">
+
+    <!-- 1. ANIMATED ARCHITECTURAL SVG 'G' LOGO WITH ::BEFORE / ::AFTER EFFECT -->
+    <div class="logo-frame" aria-label="GrantFlow Identity Mark">
+      <svg
+        width="124"
+        height="124"
+        viewBox="0 0 160 160"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="GrantFlow Logo"
+      >
+        <!-- Before-State Monochrome Hairline Guides for 3 Minimalist Bars -->
+        <g class="g-bar-guide" stroke="#141414" stroke-width="1">
+          <rect x="44" y="64" width="14" height="68" />
+          <rect x="68" y="82" width="14" height="50" />
+          <rect x="92" y="96" width="14" height="36" />
+        </g>
+
+        <!-- After-State Solid Vertical Budget Bars (Rise sequentially 0.72s–0.92s) -->
+        <rect class="g-bar-fill g-bar-1" x="44" y="64" width="14" height="68" fill="#141414" />
+        <rect class="g-bar-fill g-bar-2" x="68" y="82" width="14" height="50" fill="#1351AA" />
+        <rect class="g-bar-fill g-bar-3" x="92" y="96" width="14" height="36" fill="#141414" />
+
+        <!-- Geometric Square 'G' Frame (Draws as hairline, locks into bold architectural stroke) -->
+        <path
+          class="g-wireframe"
+          d="M138 52 V22 H22 V138 H138 V88 H98"
+          stroke="#141414"
+          stroke-width="2"
+          stroke-linecap="square"
+          stroke-linejoin="miter"
+        />
+
+        <!-- Single Cobalt Blue Square Audit Seal Node + Clean Single Pulse -->
+        <rect class="g-seal-pulse" x="118" y="80" width="16" height="16" stroke="#1351AA" stroke-width="2" fill="none" />
+        <rect class="g-seal-node" x="119" y="81" width="14" height="14" fill="#1351AA" />
+      </svg>
+    </div>
+
+    <!-- Subtle Precision Hairline Divider -->
+    <div class="rule-draw w-16 h-[1px] bg-rule mt-8 mb-6" aria-hidden="true"></div>
+
+    <!-- 2. BRIEF ABOUT GRANTFLOW SECTION -->
+    <section class="w-full flex flex-col items-center space-y-4">
+      <h1 class="mask-wordmark text-4xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-jet leading-none">
+        <span>GRANTFLOW</span>
+      </h1>
+
+      <p class="reveal-copy text-sm sm:text-base text-deepgray leading-relaxed max-w-md">
+        University Research Grant &amp; Expense Audit Portal. GrantFlow manages sanctioned research grants, enforces strict category-level budget ceilings, and preserves every invoice and approval in an immutable audit trail.
+      </p>
+    </section>
+
+    <!-- 3. SINGLE PORTAL REDIRECT OPTION -->
+    <div class="reveal-cta mt-9 w-full flex justify-center">
+      <button
+        id="enter-portal-btn"
+        type="button"
+        class="portal-cta w-full sm:w-auto"
+        onclick="enterGrantFlowPortal()"
+      >
+        <span>ENTER GRANTFLOW PORTAL</span>
+        <span class="cta-arrow" aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 0.55S FULL-SCREEN JET BLACK HANDOFF WIPE                            -->
+  <!-- =================================================================== -->
+  <div id="handoff-wipe" role="status" aria-live="polite" aria-hidden="true">
+    <div class="w-full max-w-md mx-6 space-y-4">
+      <div class="font-mono text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-cream text-center">
+        REDIRECTING TO GRANTFLOW PORTAL...
+      </div>
+      <div class="w-full h-1 bg-deepgray overflow-hidden">
+        <div id="handoff-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- JAVASCRIPT: CHOREOGRAPHED START & DIRECT PORTAL REDIRECT            -->
+  <!-- =================================================================== -->
+  <script>
+    const PORTAL_URL = 'http://localhost:8000';
+    let isRedirecting = false;
+
+    /**
+     * Trigger the choreographed entrance immediately on page load.
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.body.classList.add('stage-ready');
+        });
+      });
+    });
+
+    /**
+     * Play the 0.55s full-screen Jet Black handoff wipe with Cobalt Blue
+     * progress bar and redirect directly to the GrantFlow portal.
+     */
+    function enterGrantFlowPortal() {
+      if (isRedirecting) return;
+      isRedirecting = true;
+
+      const wipe = document.getElementById('handoff-wipe');
+      const progress = document.getElementById('handoff-progress');
+
+      if (!wipe || !progress) {
+        redirectNow();
+        return;
+      }
+
+      wipe.setAttribute('aria-hidden', 'false');
+      wipe.classList.add('is-active');
+
+      // Ensure browser registers initial 0% width before animating to 100%
+      requestAnimationFrame(() => {
+        void progress.offsetWidth;
+        progress.style.width = '100%';
+      });
+
+      setTimeout(() => {
+        redirectNow();
+      }, 550);
+    }
+
+    /**
+     * Redirect to http://localhost:8000 with a safe fallback for sandboxed iframes.
+     */
+    function redirectNow() {
+      try {
+        window.location.href = PORTAL_URL;
+      } catch (err) {
+        try {
+          window.open(PORTAL_URL, '_blank', 'noopener,noreferrer');
+        } catch (fallbackErr) {
+          console.error('Portal redirect failed:', fallbackErr);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
